@@ -27,6 +27,13 @@ Example: no rule worth naming. Say so plainly rather than leaving this blank.
 Example: `biome-ignore`, `eslint-disable`, `ts-expect-error`.
 Example: `NOLINT`, `shellcheck disable`, `clang-format off`.
 
+## Doc comments
+
+> Whether a docstring, a JSDoc block or the language's equivalent is judged like any other comment, or whether a convention or a linter requires one regardless. Say which, because the reaper's default is to cut anything that restates a signature.
+
+Example: judged as a comment. Nothing requires them, so there is no floor.
+Example: every exported symbol keeps a one-line summary, because the linter fails without it. The body is still judged.
+
 ## Documentation map
 
 > One row per documentation file, and the single job it has. The agents flag anything written in the wrong file and anything stated in two.
