@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "ai-engineering",
+  "description": "Personal Claude Code tooling: review agents, prose hooks, voice files.",
+  "owner": {
+    "name": "Enrique Ramirez",
+    "url": "https://github.com/enrique-ramirez"
+  },
+  "plugins": [
+    {
+      "name": "review-kit",
+      "description": "Design and comment review agents, a prose hook, and a portable voice system.",
+      "category": "development",
+      "source": "./"
+    }
+  ]
+}
