@@ -44,6 +44,32 @@ In copy mode it also writes `.claude/hooks/`, `.claude/agents/` and `.claude/voi
 
 Existing files are kept, not overwritten. Pass `--force` to replace them.
 
+## Refreshing a copy-mode repository
+
+Copy mode duplicates the kit into each repository, so each one drifts until you refresh it. Give the repository whatever entry point it already has:
+
+| | |
+|---|---|
+| a Node project | `"update-claude": "\"${AI_ENGINEERING:-../ai-engineering}/bin/install.sh\" . --mode copy --force"` in `package.json` |
+| anything else | a two-line `update-claude.sh` calling the same thing |
+
+`AI_ENGINEERING` defaults to a sibling checkout, so it only needs setting when the kit lives elsewhere.
+
+### What it does about files you edited
+
+`.claude/.review-kit.manifest` records the checksum of every file the installer wrote, which is how a refresh tells "you changed this" from "the kit changed this".
+
+| state | without `--force` | with `--force` |
+|---|---|---|
+| matches the kit | silent | silent |
+| the kit moved on | reported, left alone | replaced |
+| you edited it | reported, left alone | replaced, and your version saved to `<name>.local.bak` |
+| `review-profile.md` | never touched | never touched |
+
+Nothing you wrote is dropped. A rule worth keeping belongs in the kit, so every repository gets it; `.claude/register.local.txt` and `.claude/style-exempt.txt` are the places for something genuinely local, and neither is kit-managed.
+
+The manifest and the `.local.bak` files are gitignored.
+
 ## Then fill in the profile
 
 This is the part that matters. `.claude/review-profile.md` is where both agents learn the repository's boundary rule, its excluded paths, its functional directives, what each documentation file is for, and which commands they may run. Placeholders left in place make the agents fall back to generic behaviour, and they will say so in their reports.

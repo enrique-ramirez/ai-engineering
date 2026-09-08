@@ -35,16 +35,71 @@ target=$(cd "$target" && pwd)
 claude="$target/.claude"
 mkdir -p "$claude"
 wrote=()
+warnings=()
 
+# What this script installed last time, so a file you edited can be told apart from a
+# file the kit has since changed. Without it every existing file reads as edited, which
+# is the safe way to be wrong.
+manifest="$claude/.review-kit.manifest"
+staged=$(mktemp)
+trap 'rm -f "$staged"' EXIT
+
+sum() { cksum < "$1" 2>/dev/null | cut -d' ' -f1; }
+
+# Silent and empty when there is no manifest yet, which is the first run against a
+# repository the kit was copied into by hand. `awk` exits 2 on a missing file and
+# `set -e` would take that as fatal.
+installed_sum() {
+  [ -f "$manifest" ] || return 0
+  awk -v p="$1" '$2 == p { print $1; exit }' "$manifest" 2>/dev/null || true
+}
+
+# A kit-managed file. Yours to read, not to edit: a local change here is reported, and
+# `--force` moves it aside rather than dropping it.
 place() {
-  local src="$1" dest="$2"
-  if [ -e "$dest" ] && [ "$force" = no ]; then
-    echo "  kept  ${dest#"$target/"} (already there)"
+  local src="$1" dest="$2" rel="${2#"$target/"}" here there before record
+  mkdir -p "$(dirname "$dest")"
+  there=$(sum "$src")
+  # The manifest records what the kit put there, never what is on disk now. Adopting a
+  # file this run declined to touch would make the next run treat an edit as installed.
+  record="$there"
+  if [ ! -e "$dest" ]; then
+    cp "$src" "$dest"
+    wrote+=("$rel")
+  else
+    here=$(sum "$dest"); before=$(installed_sum "$rel")
+    if [ "$here" = "$there" ]; then
+      :
+    elif [ -n "$before" ] && [ "$here" = "$before" ]; then
+      if [ "$force" = yes ]; then
+        cp "$src" "$dest"
+        wrote+=("$rel (updated)")
+      else
+        echo "  kept  $rel (the kit has a newer one; --force takes it)"
+        record="$before"
+      fi
+    elif [ "$force" = yes ]; then
+      cp "$dest" "$dest.local.bak"
+      cp "$src" "$dest"
+      warnings+=("$rel had changes of its own. They are in $rel.local.bak")
+    else
+      warnings+=("$rel has changes of its own. Left alone; --force replaces it")
+      record="$before"
+    fi
+  fi
+  [ -n "$record" ] && printf '%s %s\n' "$record" "$rel" >> "$staged"
+}
+
+# A file the repository owns once it exists. Never replaced, whatever the flags say.
+place_once() {
+  local src="$1" dest="$2" rel="${2#"$target/"}"
+  if [ -e "$dest" ]; then
+    echo "  kept  $rel (yours)"
     return
   fi
   mkdir -p "$(dirname "$dest")"
   cp "$src" "$dest"
-  wrote+=("${dest#"$target/"}")
+  wrote+=("$rel")
 }
 
 if [ "$mode" = copy ]; then
@@ -53,13 +108,14 @@ if [ "$mode" = copy ]; then
   for f in "$kit"/agents/*.md; do place "$f" "$claude/agents/$(basename "$f")"; done
   for f in "$kit"/voice/*.txt "$kit"/voice/*.md; do place "$f" "$claude/voice/$(basename "$f")"; done
   for f in "$kit"/voice/personas/*.md; do place "$f" "$claude/voice/personas/$(basename "$f")"; done
+  for d in "$kit"/skills/*/; do place "$d/SKILL.md" "$claude/skills/$(basename "$d")/SKILL.md"; done
   chmod +x "$claude/hooks/check-style.sh"
   hook_command='$CLAUDE_PROJECT_DIR/.claude/hooks/check-style.sh'
 else
   hook_command='${CLAUDE_PLUGIN_ROOT}/hooks/check-style.sh'
 fi
 
-place "$kit/profile/review-profile.template.md" "$claude/review-profile.md"
+place_once "$kit/profile/review-profile.template.md" "$claude/review-profile.md"
 
 if [ ! -e "$claude/style-patterns.local.txt" ]; then
   cat > "$claude/style-patterns.local.txt" <<'TXT'
@@ -143,13 +199,22 @@ print(f"  wrote .claude/settings.json ({note})")
 PY
 
 ignore="$target/.gitignore"
-for pattern in '*.local.txt' '.claude/settings.json.bak'; do
+for pattern in '*.local.txt' '*.local.bak' '.claude/settings.json.bak' '.claude/.review-kit.manifest'; do
   if [ -f "$ignore" ] && grep -qxF "$pattern" "$ignore"; then continue; fi
   printf '%s\n' "$pattern" >> "$ignore"
   echo "  wrote .gitignore += $pattern"
 done
 
+mv "$staged" "$manifest"
+
 for f in "${wrote[@]:-}"; do [ -n "$f" ] && echo "  wrote $f"; done
+
+if [ ${#warnings[@]} -gt 0 ]; then
+  echo
+  echo "Local changes to kit files:"
+  for w in "${warnings[@]}"; do echo "  ! $w"; done
+  echo "  A change worth keeping belongs in the kit, so every repository gets it."
+fi
 
 cat <<EOF
 
