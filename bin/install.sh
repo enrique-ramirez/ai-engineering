@@ -205,6 +205,24 @@ for pattern in '*.local.txt' '*.local.bak' '.claude/settings.json.bak' '.claude/
   echo "  wrote .gitignore += $pattern"
 done
 
+# Anything the last install wrote that this one did not is a file the kit has dropped or
+# renamed. Without this it lingers in every repository as a second, stale copy.
+if [ -f "$manifest" ]; then
+  while read -r before rel; do
+    [ -n "${rel:-}" ] || continue
+    grep -q " $rel\$" "$staged" && continue
+    gone="$target/$rel"
+    [ -e "$gone" ] || continue
+    if [ "$(sum "$gone")" = "$before" ]; then
+      rm -f "$gone"
+      rmdir "$(dirname "$gone")" 2>/dev/null || true
+      wrote+=("$rel (removed, no longer in the kit)")
+    else
+      warnings+=("$rel is no longer in the kit but has changes of its own. Left in place; delete it yourself")
+    fi
+  done < "$manifest"
+fi
+
 mv "$staged" "$manifest"
 
 for f in "${wrote[@]:-}"; do [ -n "$f" ] && echo "  wrote $f"; done

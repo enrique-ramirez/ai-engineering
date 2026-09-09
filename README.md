@@ -14,7 +14,7 @@ Reusable Claude Code tooling: two review agents, a prose hook, and a voice syste
 | `voice/constructions.md` | the shapes that read as an assistant, which no word list can catch |
 | `voice/personas/` | who is speaking, for text that posts under a person's name |
 | `profile/` | the template a target repository fills in |
-| `skills/` | run a review pass, install the kit, humanize a file |
+| `skills/` | run a review pass, fill in a repository's profile, humanize a file |
 | `bin/install.sh` | copies the kit into a repository and merges the hook into its settings |
 
 ## The two halves

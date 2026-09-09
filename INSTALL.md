@@ -50,8 +50,8 @@ Copy mode duplicates the kit into each repository, so each one drifts until you 
 
 | | |
 |---|---|
-| a Node project | `"update-claude": "\"${AI_ENGINEERING:-../ai-engineering}/bin/install.sh\" . --mode copy --force"` in `package.json` |
-| anything else | a two-line `update-claude.sh` calling the same thing |
+| a Node project | `"sync-kit": "\"${AI_ENGINEERING:-../ai-engineering}/bin/install.sh\" . --mode copy --force"` in `package.json` |
+| anything else | a two-line `sync-kit.sh` calling the same thing |
 
 `AI_ENGINEERING` defaults to a sibling checkout, so it only needs setting when the kit lives elsewhere.
 
@@ -65,6 +65,7 @@ Copy mode duplicates the kit into each repository, so each one drifts until you 
 | the kit moved on | reported, left alone | replaced |
 | you edited it | reported, left alone | replaced, and your version saved to `<name>.local.bak` |
 | `review-profile.md` | never touched | never touched |
+| dropped from the kit | removed if untouched, reported if not | removed if untouched, reported if not |
 
 Nothing you wrote is dropped. A rule worth keeping belongs in the kit, so every repository gets it; `.claude/register.local.txt` and `.claude/style-exempt.txt` are the places for something genuinely local, and neither is kit-managed.
 
@@ -74,7 +75,7 @@ The manifest and the `.local.bak` files are gitignored.
 
 This is the part that matters. `.claude/review-profile.md` is where both agents learn the repository's boundary rule, its excluded paths, its functional directives, what each documentation file is for, and which commands they may run. Placeholders left in place make the agents fall back to generic behaviour, and they will say so in their reports.
 
-The `install-review-kit` skill fills most of it by reading the repository, and leaves the two judgement calls open.
+The `review-profile` skill fills most of it by reading the repository, and leaves the two judgement calls open.
 
 ## Check that the hook fires
 
