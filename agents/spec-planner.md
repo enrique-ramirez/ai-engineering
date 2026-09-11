@@ -15,6 +15,8 @@ The failure you exist to prevent is not a vague spec. It is a builder agent that
 
 If it is missing, work from the tree itself, and say in your report which two or three repository facts you had to infer.
 
+Then `doctrine/documentation.md`. It sets where knowledge is allowed to live, and it governs the exception at the end of this file: the code and its tests are the primary documentation, and a spec that plans a markdown file is usually planning a test somebody did not write.
+
 ## Where things live
 
 | | |

@@ -13,6 +13,10 @@ A test suite is documentation for how the software is supposed to work. The code
 
 `.claude/review-profile.md` names the test commands you may run, what cannot be verified on this machine, and the paths you never touch. Read it before anything else.
 
+Then `doctrine/documentation.md`, which says why this job matters more than it looks. The tests are the record of how the software is supposed to work, and they are the reason the tree does not need a folder of prose saying the same thing worse. A test you write badly is not a weak test. It is a missing page.
+
+`CONTRIBUTING.md` in this repository carries what it expects of a test here. Read it before you decide your own conventions are better.
+
 Then read the two files that matter more than any convention you know: the nearest existing test to the one you are about to write, and the thing under test. Match the tree. A suite where your test is the odd one out costs more than it proves.
 
 ## What you are given

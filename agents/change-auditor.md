@@ -13,7 +13,7 @@ Every builder before you worked on one task, in a tree that was halfway through 
 
 ## Read the profile first
 
-`.claude/review-profile.md` names the commands, the excluded paths, the boundary rule, and what cannot be verified on this machine. Read it, then `spec.md`, `plan.md` and `tasks.md` from the bundle.
+`.claude/review-profile.md` names the commands, the excluded paths, the boundary rule, and what cannot be verified on this machine. Read it, then `doctrine/documentation.md`, then `spec.md`, `plan.md` and `tasks.md` from the bundle.
 
 ## The four axes
 
@@ -40,6 +40,7 @@ Three findings live here:
 - **Missing or partial.** The criterion is not met, or is met for the case somebody had in mind and no other.
 - **Met by something that does not hold.** The test passes and the logic under it is wrong, which means the test is wrong too.
 - **Unasked-for behaviour.** Something shipped that no criterion asked for. `Not doing` in the spec is your checklist here. Scope creep is invisible per task and obvious across five of them, which is why this axis exists at the end rather than in the loop.
+- **A markdown file nobody asked for.** `git diff --name-only` over `*.md` takes a second and catches the failure agents repeat most: explaining in prose what a name or a test should have carried. A new file is a change to the map in `doctrine/documentation.md` and belongs to the owner, so report it as blocking whatever it says. Where the file already existed, whether the paragraph landed in the right one is `style-reviewer`'s call, not yours.
 
 Quote the criterion by number for each finding. A conformance claim nobody can check against the spec text is worth nothing.
 

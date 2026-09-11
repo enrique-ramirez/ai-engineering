@@ -48,6 +48,7 @@ For each unchecked task:
 | the test passes now | the command `test-writer` gave you |
 | the targeted check passes | the command from `plan.md`. Only what this task touched, never a full suite. Mid-spec the suite is red for reasons that belong to tasks not yet written, and it stays that way until the audit |
 | the done-test from the task line holds | read it, do not take the builder's word |
+| no markdown file was created | `git diff --name-only --diff-filter=A -- '*.md'` comes back empty. The map in `doctrine/documentation.md` is the owner's, and a builder that explained itself in prose usually skipped a test |
 | the diff does only the task | read it. Extra work is a bounce, however good it is |
 
 The test file check is not negotiable and never a judgement call. A builder that edited the test it was measured by has invalidated the whole task, whatever the result looks like.

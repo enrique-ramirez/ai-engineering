@@ -7,3 +7,5 @@
 */ai-engineering/profile/*
 */ai-engineering/README.md
 */ai-engineering/INSTALL.md
+*/ai-engineering/doctrine/*
+*/ai-engineering/templates/*

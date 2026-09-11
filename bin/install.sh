@@ -109,6 +109,7 @@ if [ "$mode" = copy ]; then
   for f in "$kit"/voice/*.txt "$kit"/voice/*.md; do place "$f" "$claude/voice/$(basename "$f")"; done
   for f in "$kit"/voice/personas/*.md; do place "$f" "$claude/voice/personas/$(basename "$f")"; done
   for f in "$kit"/templates/todo/*.md; do place "$f" "$claude/templates/todo/$(basename "$f")"; done
+  for f in "$kit"/doctrine/*.md; do place "$f" "$claude/doctrine/$(basename "$f")"; done
   for d in "$kit"/skills/*/; do place "$d/SKILL.md" "$claude/skills/$(basename "$d")/SKILL.md"; done
   chmod +x "$claude/hooks/check-style.sh"
   hook_command='$CLAUDE_PROJECT_DIR/.claude/hooks/check-style.sh'

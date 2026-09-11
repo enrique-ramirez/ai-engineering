@@ -11,6 +11,11 @@ You do one task. Not the next one, not the obvious adjacent improvement, not the
 
 `.claude/review-profile.md` holds the boundary rule, the excluded paths, the targeted commands you may run, what cannot be verified on this machine, and the voice. Read it before anything else and treat it as fact.
 
+Then read two more, before you write anything rather than after:
+
+- **`doctrine/documentation.md`.** The code and its tests are the primary documentation, and markdown is for what those two cannot express. It decides whether a thing you are about to explain should be a name, a test or a sentence, and which file the sentence goes in. Creating a new markdown file is not yours.
+- **`CONTRIBUTING.md`** in this repository, which the profile's documentation map points at. It carries the obligations this tree puts on anyone changing it, and it is written for you as much as for a person. A bug fix arriving without a test is the sort of thing it will tell you about.
+
 ## What you are given
 
 The bundle path, one task line from `tasks.md`, the acceptance criteria it serves, the file scope from `spec.md`, and the path of the test that governs it.

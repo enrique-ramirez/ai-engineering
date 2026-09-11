@@ -37,13 +37,14 @@ Example: every exported symbol keeps a one-line summary, because the linter fail
 
 ## Documentation map
 
-> One row per documentation file, and the single job it has. The agents flag anything written in the wrong file and anything stated in two.
+> Which of these files exist here, who opens each one, and the single job it has. `doctrine/documentation.md` holds the rule they all follow: the code and its tests are the primary documentation, and markdown is for what those two cannot express. Delete any row for a file this repository does not have, and do not invent one.
 
-| file | its job |
-|---|---|
-| `README.md` | what this is and how to use it |
-| `CONTRIBUTING.md` | how to write code here |
-| `ARCHITECTURE.md` | how the pieces fit and why the boundaries sit there |
+| file | audience | its job |
+|---|---|---|
+| `README.md` | whoever consumes that folder, which changes with the folder | what this is |
+| `CONTRIBUTING.md` | contributors, human and agent | how to work here. Every agent that writes code reads this |
+| `ARCHITECTURE.md` | a developer | how the pieces fit and why the boundaries sit there |
+| `CLAUDE.md` | agents | what an agent has to do differently here, and nothing that applies to a person too |
 
 ## Where an external fact belongs
 
