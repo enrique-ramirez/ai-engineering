@@ -46,7 +46,7 @@ For each unchecked task:
 | the test file is untouched | `git diff --name-only -- <test path>` comes back empty |
 | nothing outside the file scope moved | `git diff --name-only` against the scope list |
 | the test passes now | the command `test-writer` gave you |
-| the targeted check passes | the command from `plan.md`, never a full suite |
+| the targeted check passes | the command from `plan.md`. Only what this task touched, never a full suite. Mid-spec the suite is red for reasons that belong to tasks not yet written, and it stays that way until the audit |
 | the done-test from the task line holds | read it, do not take the builder's word |
 | the diff does only the task | read it. Extra work is a bounce, however good it is |
 
@@ -74,13 +74,49 @@ After each accepted task: check its box in `tasks.md`, stop, and report. Say wha
 
 Where they say to carry on without committing, do, and keep a running list of where the commit boundaries were, so the series can still be reconstructed. Say each time how many tasks are now stacked up unreviewed, because that number is the cost of continuing.
 
-## The last task
+## The cleanup task
 
-The cleanup task is the one people skip, and it is the reason the bundle has one.
+The last task in `tasks.md` is the cleanup, and it is the one people skip. It runs through the loop above like any other, and you walk it rather than trusting it: flags whose other branch is now dead, fixtures nothing loads, probes left in `_tmp/`, commented-out attempts.
 
-Walk it rather than trusting it. Flags whose other branch is now dead, fixtures nothing loads, probes left in `_tmp/`, commented-out attempts. Then check every acceptance criterion against what actually shipped, and where one drifted, say which side is wrong rather than quietly editing the spec to match the code.
+## The audit
 
-Then `/review` over the whole change, and `/plan done <n>` to move the bundle out of `_todo/`.
+Once every box is checked, dispatch `change-auditor` over the whole change. This is the only step that sees all the tasks at once, and it is where the full suite runs for the first time.
+
+It comes back with four axes reported separately. **Do not collapse them into a verdict.** A change can be green, meet every criterion, and be broken where two tasks meet.
+
+It cannot edit anything, on purpose. Every finding comes back to you to route.
+
+### Routing what it found
+
+| finding | what you do |
+|---|---|
+| a check is red, inside one task's files | re-dispatch that task's builder with the failure output pasted in |
+| a check is red, across several tasks' files | a seam. Append a new task to `tasks.md` and dispatch it fresh |
+| green that should not be green: a skipped test, a relaxed assertion, a rewritten snapshot | back to `test-writer`, and the task that did it is not done |
+| a criterion is missing or partial | the task that claimed it lied. Uncheck the box and re-dispatch |
+| a criterion is met by logic that does not hold | the test is wrong too. `test-writer` first, then the builder |
+| behaviour shipped that nobody asked for | back to the builder that added it, to take it out. Where the owner turns out to want it, that is a spec change and it goes to `/plan resume` |
+| a seam defect | nobody's task, so make it one. Append and dispatch |
+| a defect inside one task | re-dispatch that builder |
+| noted, not blocking | relay it. Do not act on it, and do not let it become a round |
+| out of scope | relay it to `/plan` as a future bundle. A spec that absorbs every problem it walked past never ships |
+
+Appending a task to `tasks.md` is bookkeeping, and it is yours. Writing the code in it is not.
+
+### Re-auditing
+
+After a fix round, re-run only the axes the fix could have touched. A one-line correction does not need the seams read again.
+
+**The same blocking finding surviving two fix rounds is a spec problem.** Stop dispatching. Say which it is, take it to `/plan resume`, and let the spec answer it.
+
+## Closing out
+
+Order matters here, and it is not the obvious one.
+
+1. **The audit**, until it comes back with nothing blocking. Correctness first: there is no point judging the design of code that does the wrong thing.
+2. **`/review`** over the whole change, for design and for comments. That is `style-reviewer` and `comment-reaper`, and neither is the auditor's job.
+3. **The Green axis again**, on its own, if `/review` changed any code. It usually does, and an edit made after the last suite run is an unverified edit.
+4. **`/plan done <n>`** to walk the acceptance criteria one final time and move the bundle out of `_todo/`.
 
 ## Reporting
 

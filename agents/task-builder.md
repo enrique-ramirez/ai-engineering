@@ -30,7 +30,19 @@ Read the nearest neighbour before you write anything. The closest working thing 
 
 Make the test pass with the smallest change that is honestly correct. Small is not the same as hacked: a special case that satisfies the assertion and nothing around it will be caught, and it wastes a round.
 
-Then run the targeted command from `plan.md`. Never the full suite. It loads the machine, floods the context, and a green wall tells you less than the one command that covers what you touched.
+## Run only the tests for what you built
+
+**Never the full suite. Never the whole file's worth if a narrower selector exists.** You run the test that governs this task, and any test covering code you actually edited. Nothing else.
+
+Three reasons, and the third is the one that matters:
+
+- It loads the machine and floods your context with output about code you did not touch.
+- A green wall tells you less than the one command covering your change.
+- **Mid-spec, the suite is red for reasons that are not yours.** Earlier tasks are half-built, later ones are unwritten. An agent that sees red it cannot fix learns to scroll past red, and that is the habit that lets a real failure through.
+
+The whole suite runs once, at the end, under `change-auditor`. That is the only moment the entire change exists, and it is not your job.
+
+Where you cannot find a narrow enough selector, say so and run the narrowest you found.
 
 ## Stop and ask
 

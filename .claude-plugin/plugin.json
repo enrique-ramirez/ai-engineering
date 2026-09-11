@@ -1,6 +1,6 @@
 {
   "name": "review-kit",
-  "description": "A planner, a build coordinator, two review agents, a prose hook and a voice system. The planner interviews you into a spec another agent can build from; the coordinator dispatches that build and checks what comes back without writing code itself; the review agents judge design and comments; the hook catches the register and formatting tells a grep can be sure about. Everything repo-specific comes from a profile file the target repository owns.",
+  "description": "A planner, a build coordinator, an auditor, two review agents, a prose hook and a voice system. The planner interviews you into a spec another agent can build from; the coordinator dispatches that build and checks what comes back without writing code itself; the auditor is the last look at the whole change; the review agents judge design and comments; the hook catches the register and formatting tells a grep can be sure about. Everything repo-specific comes from a profile file the target repository owns.",
   "version": "0.1.0",
   "author": {
     "name": "Enrique Ramirez",
