@@ -2,7 +2,7 @@
 
 Two modes. Pick one per repository.
 
-**Plugin.** The agents, hooks and voice files stay here, and every repository points at them. One update reaches all of them. Needs the plugin installed in Claude Code.
+**Plugin.** The agents, skills, hooks, voice files, doctrine and templates stay here, and every repository points at them. One update reaches all of them. Needs the plugin installed in Claude Code.
 
 **Copy.** Everything lands inside the repository's own `.claude/`, so it works with no plugin and travels with a clone. Updates mean re-running the installer.
 
@@ -33,20 +33,22 @@ Once this repository has a remote, the marketplace line takes the URL instead of
 
 | | |
 |---|---|
-| `.claude/review-profile.md` | the template, for you to fill in |
-| `.claude/style-patterns.local.txt` | your hostnames and machine names, gitignored |
+| `.claude/review-profile.md` | the template, to be filled in |
+| `.claude/style-patterns.local.txt` | local hostnames and machine names, gitignored |
 | `.claude/register.local.txt` | repository-local register additions, and switches for the built-in checks |
 | `.claude/style-exempt.txt` | paths the hook skips |
 | `.claude/settings.json` | the `PostToolUse` hook, merged into whatever is already there, with a `.bak` beside it |
-| `.gitignore` | two entries, appended if absent |
+| `.gitignore` | seven entries, appended if absent: the local and backup files, plus `_todo/`, `_done/` and `_tmp/` |
 
-In copy mode it also writes `.claude/hooks/`, `.claude/agents/` and `.claude/voice/`.
+In copy mode it also writes `.claude/hooks/`, `.claude/agents/`, `.claude/skills/`, `.claude/voice/`, `.claude/doctrine/` and `.claude/templates/`.
+
+It does not create `_todo/`. `spec-planner` does that the first time `/plan` runs.
 
 Existing files are kept, not overwritten. Pass `--force` to replace them.
 
 ## Refreshing a copy-mode repository
 
-Copy mode duplicates the kit into each repository, so each one drifts until you refresh it. Give the repository whatever entry point it already has:
+Copy mode duplicates the kit into each repository, so each one drifts until it is refreshed. Give the repository whatever entry point it already has:
 
 | | |
 |---|---|
@@ -55,25 +57,25 @@ Copy mode duplicates the kit into each repository, so each one drifts until you 
 
 `AI_ENGINEERING` defaults to a sibling checkout, so it only needs setting when the kit lives elsewhere.
 
-### What it does about files you edited
+### What it does about edited files
 
-`.claude/.review-kit.manifest` records the checksum of every file the installer wrote, which is how a refresh tells "you changed this" from "the kit changed this".
+`.claude/.review-kit.manifest` records the checksum of every file the installer wrote, which is how a refresh tells a local edit from a kit update.
 
 | state | without `--force` | with `--force` |
 |---|---|---|
 | matches the kit | silent | silent |
 | the kit moved on | reported, left alone | replaced |
-| you edited it | reported, left alone | replaced, and your version saved to `<name>.local.bak` |
+| edited locally | reported, left alone | replaced, and the local version saved to `<name>.local.bak` |
 | `review-profile.md` | never touched | never touched |
 | dropped from the kit | removed if untouched, reported if not | removed if untouched, reported if not |
 
-Nothing you wrote is dropped. A rule worth keeping belongs in the kit, so every repository gets it; `.claude/register.local.txt` and `.claude/style-exempt.txt` are the places for something genuinely local, and neither is kit-managed.
+Nothing written locally is dropped. A rule worth keeping belongs in the kit, so every repository gets it; `.claude/register.local.txt` and `.claude/style-exempt.txt` are the places for something genuinely local, and neither is kit-managed.
 
 The manifest and the `.local.bak` files are gitignored.
 
 ## Then fill in the profile
 
-This is the part that matters. `.claude/review-profile.md` is where both agents learn the repository's boundary rule, its excluded paths, its functional directives, what each documentation file is for, and which commands they may run. Placeholders left in place make the agents fall back to generic behaviour, and they will say so in their reports.
+This is the part that matters. `.claude/review-profile.md` is where every agent learns the repository's boundary rule, its excluded paths, its functional directives, who reads each documentation file, and which commands they may run. Placeholders left in place make the agents fall back to generic behaviour, and they will say so in their reports.
 
 The `review-profile` skill fills most of it by reading the repository, and leaves the two judgement calls open.
 

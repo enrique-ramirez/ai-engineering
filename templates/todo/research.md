@@ -14,7 +14,7 @@
 
 ## Outside
 
-<!-- How a library, a service or a browser actually behaves, where nobody would guess it. Name the source and the date you read it. -->
+<!-- How a library, a service or a browser actually behaves, where nobody would guess it. Name the source and the date it was read. -->
 
 - 
 

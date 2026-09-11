@@ -64,9 +64,12 @@ The repository states the current design and nothing else. The target repository
 3. **Never create a new markdown file.** A new file is a change to this map, and the map is the owner's. Propose it.
 4. **Nothing committed names `_todo/`, `_done/` or `_tmp/`.** They are gitignored, so a reference to them is a link to nothing on every machine but one.
 5. **Present tense, current state.** No history, no changelog, no dated decision, no note about what this used to be. A record of what changed is a record that quietly stops being true.
-6. **One fact, one home.** The second copy is the bug, because the two drift and nobody is told which is wrong.
-7. **Read `CONTRIBUTING.md` before you write code here.** It is where the obligations live, and it is written for you as much as for a person.
-8. **Brief.** Every surviving sentence was chosen over a test. It should read like it.
+6. **Third person.** Documentation describes the software, not the people around it. No *I*, *we* or *my*: a README opening "tooling I use" is a claim about a person, and it stops being true the day somebody else maintains it. No *you* or *your* either. Where the reader has to act, the imperative carries it with no subject at all. *Fill in the profile*, never *you fill in the profile*, and *type `/plan` to start a spec*, never *you type `/plan`*.
+7. **One fact, one home.** The second copy is the bug, because the two drift and nobody is told which is wrong.
+8. **Read `CONTRIBUTING.md` before you write code here.** It is where the obligations live, and it is written for you as much as for a person.
+9. **Brief.** Every surviving sentence was chosen over a test. It should read like it.
+
+Rule 6 governs documentation. An instruction addressed to whoever is writing is a different genre and stays in the second person: the agent files, the skill files, the voice files, and this one.
 
 ## The exception
 

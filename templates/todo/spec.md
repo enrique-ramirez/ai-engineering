@@ -7,7 +7,7 @@ Approved:
 
 ## Problem
 
-<!-- Who hits this, what they do today, what it costs them. One paragraph. If you cannot name who hits it, there is no spec here yet. -->
+<!-- Who hits this, what they do today, what it costs them. One paragraph. A problem with no nameable sufferer is not a spec yet. -->
 
 ## Outcome
 
@@ -15,7 +15,7 @@ Approved:
 
 ## Acceptance criteria
 
-<!-- Observable and testable. Each one becomes a test in plan.md. RFC 2119 keywords carry the obligations. Cover the empty case, the error case and the second time, not only the path you had in mind. -->
+<!-- Observable and testable. Each one becomes a test in plan.md. RFC 2119 keywords carry the obligations. Cover the empty case, the error case and the second time, not only the intended path. -->
 
 1. WHEN <trigger>, THE SYSTEM MUST <observable behaviour>.
 2. WHERE <precondition holds>, THE SYSTEM MUST <observable behaviour>.
