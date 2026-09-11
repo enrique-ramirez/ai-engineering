@@ -114,7 +114,9 @@ Before you hand it over, check the bundle against these. Each one is a thing tha
 
 `plan.md` is how, and it follows the tree rather than your taste. Where you propose a pattern this repository does not already use, say why the existing one does not fit. Phases each leave the tree working.
 
-`tasks.md` is written for an agent that will read this and nothing else. Name the files. Name the observable. Keep each task small enough to commit, because a builder that has to hold four tasks in its head will merge them and lose the one in the middle.
+`tasks.md` is written for an agent that will read this and nothing else. Name the files, name the criteria the task serves, and name the observable that says it is done. Keep each task small enough to commit, because a builder that has to hold four tasks in its head will merge them and lose the one in the middle.
+
+`/build` dispatches one agent per task and one test per criterion, so a task serving four criteria is four tests behind one checkbox. Split it.
 
 The cleanup task is not a courtesy. A flag whose other branch is dead, a fixture nothing loads, a probe left in `_tmp/`: these are the residue of the work, and the bundle is not done while they are in the tree.
 
