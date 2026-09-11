@@ -1,6 +1,6 @@
 # Review profile
 
-Copy to `.claude/review-profile.md` in the target repository and fill in every section. The review agents read this first and treat it as fact about the repository. Anything left as a placeholder makes them fall back to generic behaviour and say that they did.
+Copy to `.claude/review-profile.md` in the target repository and fill in every section. The review agents and `spec-planner` read this first and treat it as fact about the repository. Anything left as a placeholder makes them fall back to generic behaviour and say that they did.
 
 Keep it short. This is the file that stops the agents from inventing a boundary the repository does not have.
 
@@ -19,6 +19,7 @@ Example: no rule worth naming. Say so plainly rather than leaving this blank.
 - `node_modules/`
 - `dist/`
 - `*.local.md`
+- `_todo/`, `_done/`, `_tmp/` (gitignored scratch; `spec-planner` owns the first two)
 
 ## Functional directives
 

@@ -108,6 +108,7 @@ if [ "$mode" = copy ]; then
   for f in "$kit"/agents/*.md; do place "$f" "$claude/agents/$(basename "$f")"; done
   for f in "$kit"/voice/*.txt "$kit"/voice/*.md; do place "$f" "$claude/voice/$(basename "$f")"; done
   for f in "$kit"/voice/personas/*.md; do place "$f" "$claude/voice/personas/$(basename "$f")"; done
+  for f in "$kit"/templates/todo/*.md; do place "$f" "$claude/templates/todo/$(basename "$f")"; done
   for d in "$kit"/skills/*/; do place "$d/SKILL.md" "$claude/skills/$(basename "$d")/SKILL.md"; done
   chmod +x "$claude/hooks/check-style.sh"
   hook_command='$CLAUDE_PROJECT_DIR/.claude/hooks/check-style.sh'
@@ -199,7 +200,7 @@ print(f"  wrote .claude/settings.json ({note})")
 PY
 
 ignore="$target/.gitignore"
-for pattern in '*.local.txt' '*.local.bak' '.claude/settings.json.bak' '.claude/.review-kit.manifest'; do
+for pattern in '*.local.txt' '*.local.bak' '.claude/settings.json.bak' '.claude/.review-kit.manifest' '_todo/' '_done/' '_tmp/'; do
   if [ -f "$ignore" ] && grep -qxF "$pattern" "$ignore"; then continue; fi
   printf '%s\n' "$pattern" >> "$ignore"
   echo "  wrote .gitignore += $pattern"
