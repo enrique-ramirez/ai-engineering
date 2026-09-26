@@ -9,8 +9,7 @@ Nothing here knows what a repository is for. Everything project-specific lives i
 ```
 /plan add passkey login      # interviews the owner, writes _todo/007-passkey-login/
 /plan approve 007            # once its guesses have been answered
-/build 007                   # builds it task by task, then audits the lot
-/review                      # design, then comments
+/build 007                   # builds it in parallel lanes, audits the lot, reviews it
 /plan done 007               # cleanup, bundle moves to _done/
 ```
 
@@ -24,7 +23,7 @@ That's the whole thing. `/build` refuses to start on an unapproved spec, and `/p
 | `/plan resume <n>` | picks an open bundle back up |
 | `/plan approve <n>` | checks the bundle is actually buildable, then records the owner's approval |
 | `/plan done <n>` | walks the cleanup and moves the bundle to `_done/` |
-| `/build <n>` | builds an approved bundle |
+| `/build <n>` | builds an approved bundle, and measures what it cost |
 | `/review [target]` | design pass then comments pass. Defaults to uncommitted work |
 | `/humanize <path>` | rewrites prose that reads like an assistant wrote it |
 | `/review-profile` | fills in this repo's profile by reading the code |
@@ -35,7 +34,7 @@ Three gitignored folders. None of them are part of the repo:
 
 | | |
 |---|---|
-| `_todo/` | specs in flight. One folder per unit of work, holding `spec.md`, `plan.md`, `tasks.md`, `research.md` |
+| `_todo/` | specs in flight. One folder per unit of work, holding `spec.md`, `plan.md`, `tasks.md`, `research.md`, and `build-metrics.md` once it is built |
 | `_done/` | where a bundle goes once it ships |
 | `_tmp/` | scratch. Probes, throwaway scripts, anything needed once |
 
@@ -43,17 +42,22 @@ Treat `_todo/` like a board sitting next to the code, not like part of it. Nothi
 
 ## Who does what during a build
 
-`/build` turns the main agent into a coordinator. It writes no code. It dispatches, checks what comes back, and bounces anything that fails a check:
+`/build` turns the main agent into a coordinator. It writes no code. It groups the tasks by the files their tests share, runs groups that share nothing in parallel lanes, writes each agent a brief that names the seam it needs, checks what comes back, and bounces anything that fails a check:
 
 | | |
 |---|---|
-| `test-writer` | turns one acceptance criterion into a failing test. Owns the test file |
-| `task-builder` | makes that test pass. One task, inside the spec's file scope, and it cannot edit the test |
+| `test-writer` | turns a group's acceptance criteria into failing tests, and proves each one bites by breaking a throwaway implementation. Owns the test files |
+| `task-builder` | makes those tests pass, inside the spec's file scope, and cannot edit them |
+| `style-reviewer` | reviews each group's design as it lands, while the diff is still small |
 | `change-auditor` | the last look at the whole change: suite, lint, conformance, seams, defects. Reports, never edits |
 
 The builder only runs the tests for what it built. The full suite runs once, at the end, under the auditor. That's the only moment the whole change exists.
 
-Then `/review`, which is a different question - is this well built, rather than does it work:
+Then `comment-reaper`, once over the whole change, decides which comments survive. It tests each one against a reader who never saw it, and where the two disagree it has often found a bug.
+
+Every build writes `build-metrics.md` into its bundle, a row per dispatch with its time and tokens, so one bundle can be compared with the last.
+
+Outside a build, `/review` runs the same two reviewers over any target:
 
 | | |
 |---|---|
@@ -62,7 +66,7 @@ Then `/review`, which is a different question - is this well built, rather than 
 
 ## The rules they all read
 
-**`doctrine/documentation.md`.** The code and its tests are the primary documentation. Markdown covers what those two can't express, and nothing else. Every agent that writes anything reads this first, so it's a rule at write time rather than something the reaper discovers later.
+**`doctrine/documentation.md`.** The code and its tests are the primary documentation. Markdown covers what those two can't express, and nothing else. Every agent that writes documentation reads this first, so it's a rule at write time rather than something the reaper discovers later.
 
 **`voice/`.** `register.txt` is the words that read as an assistant, `constructions.md` is the shapes, which is the half no word list catches. `personas/` is for text posting under a person's name. Public docs use the house voice.
 

@@ -55,13 +55,13 @@ Example: `docs/api.md` for anything the upstream service returns.
 
 ## Commands
 
-> Targeted forms only. The agents are forbidden from running a full suite.
+> Targeted forms only. The agents are forbidden from running a full suite. Give what each one costs, measured, because that decides where it gets run. Where a narrower form saves nothing, because the cost is compiling rather than running, say so, and the agents run the whole of it.
 
-| | |
-|---|---|
-| lint | `pnpm lint` |
-| types | `pnpm typecheck` |
-| one test file | `pnpm test path/to/file.spec.ts` |
+| | command | cost |
+|---|---|---|
+| lint | `pnpm lint` | 1s |
+| types | `pnpm typecheck` | 2s |
+| one test file | `pnpm test path/to/file.spec.ts` | 5s |
 
 ## What cannot be verified here
 
