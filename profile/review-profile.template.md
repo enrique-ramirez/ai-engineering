@@ -1,8 +1,6 @@
 # Review profile
 
-Copy to `.claude/review-profile.md` in the target repository and fill in every section. The review agents and `spec-planner` read this first and treat it as fact about the repository. Anything left as a placeholder makes them fall back to generic behaviour and say that they did.
-
-Keep it short. This is the file that stops the agents from inventing a boundary the repository does not have.
+Every kit agent reads this first and treats it as fact about the repository. Fill in every section and keep it short; a placeholder makes the agents fall back to generic behaviour.
 
 ## Boundary
 
@@ -37,25 +35,25 @@ Example: every exported symbol keeps a one-line summary, because the linter fail
 
 ## Documentation map
 
-> Which of these files exist here, who opens each one, and the single job it has. `doctrine/documentation.md` holds the rule they all follow: the code and its tests are the primary documentation, and markdown is for what those two cannot express. Delete any row for a file this repository does not have, and do not invent one.
+> Which of these files exist here, who reads each, and its one job, per `doctrine/documentation.md`. Delete a row for a file this repository does not have.
 
 | file | audience | its job |
 |---|---|---|
-| `README.md` | whoever consumes that folder, which changes with the folder | what this is |
-| `CONTRIBUTING.md` | contributors, human and agent | how to work here. Every agent that writes code reads this |
-| `ARCHITECTURE.md` | a developer | how the pieces fit and why the boundaries sit there |
-| `CLAUDE.md` | agents | what an agent has to do differently here, and nothing that applies to a person too |
+| `README.md` | whoever uses that folder's thing | what it is and how to use it |
+| `CONTRIBUTING.md` | developers, human and agent | how to write code here |
+| `ARCHITECTURE.md` | developers | how the parts fit |
+| `CLAUDE.md` | agents only | pointers, and traps an agent cannot read off the code |
 
 ## Where an external fact belongs
 
-> When a comment turns out to hold a fact about an outside system, the reaper moves it here rather than deleting it.
+> Where the reaper moves a fact about an outside system when it governs more than one file. A fact about one line stays a comment beside it.
 
 Example: `ARCHITECTURE.md`.
 Example: `docs/api.md` for anything the upstream service returns.
 
 ## Commands
 
-> Targeted forms only. The agents are forbidden from running a full suite. Give what each one costs, measured, because that decides where it gets run. Where a narrower form saves nothing, because the cost is compiling rather than running, say so, and the agents run the whole of it.
+> Targeted forms only; agents never run a full suite. Give each one's cost, which decides where it runs. Where a narrower form saves nothing because the cost is compiling, say so.
 
 | | command | cost |
 |---|---|---|

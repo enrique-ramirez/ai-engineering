@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Counts what the prose hook would flag, without the per-file report cap.
+"""Counts what the style hook would flag, without the per-file report cap.
 
     report.py [<path> ...]
 
@@ -14,12 +14,15 @@ import pathlib
 import subprocess
 import sys
 
+sys.dont_write_bytecode = True
+
 SKIP = ("node_modules", "third_party", "/sdk/", ".venv", "/dist/", "/build/")
 
 
 def load(kit: pathlib.Path):
     spec = importlib.util.spec_from_file_location("cp", kit / "hooks" / "check-prose.py")
     module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
     spec.loader.exec_module(module)
     return module
 
@@ -45,12 +48,11 @@ def main() -> int:
         or targets[0]
     )
 
-    registers = [str(kit / "voice" / "register.txt")]
-    local = root / ".claude" / "register.local.txt"
-    if local.exists():
-        registers.append(str(local))
-    literals, patterns, disabled = checker.load_register(registers)
-    builtins = [c for c in checker.BUILTINS if c[0] not in disabled]
+    claude = root / ".claude"
+    rules = checker.load_rules(
+        [str(kit / "voice" / "register.txt"), str(claude / "register.local.txt")],
+        str(claude / "style-patterns.local.txt"),
+    )
 
     exempt: list[str] = []
     exempt_file = root / ".claude" / "style-exempt.txt"
@@ -76,15 +78,7 @@ def main() -> int:
             continue
         if b"\x00" in raw[:8192]:
             continue
-        text = raw.decode("utf-8", errors="replace")
-        hits = 0
-        for _, line in checker.prose_lines(name, text):
-            if (
-                any(p.search(line) for _, p in literals)
-                or any(p.search(line) for p in patterns)
-                or any(p.search(line) for _, p, _ in builtins)
-            ):
-                hits += 1
+        hits = len(checker.find_problems(name, raw.decode("utf-8", errors="replace"), rules))
         if hits:
             rows.append((hits, name))
 

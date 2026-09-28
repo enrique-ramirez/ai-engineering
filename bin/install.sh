@@ -125,9 +125,13 @@ if [ ! -e "$claude/style-patterns.local.txt" ]; then
 # that must not reach a commit: hostnames, internal addresses, machine names, personal
 # paths. This file is gitignored, so it never publishes what it exists to keep out.
 #
+# A line starting with `-` is an allow pattern: every check passes on a line matching
+# it. Use it for a line that has to quote a banned phrase, or a public URL.
+#
 # Example:
 # 10\.0\.0\.
 # my-laptop
+# -github\.com/my-name
 TXT
   wrote+=(".claude/style-patterns.local.txt")
 fi
@@ -136,18 +140,19 @@ if [ ! -e "$claude/register.local.txt" ]; then
   cat > "$claude/register.local.txt" <<'TXT'
 # Repository-local additions to the register list, read after the shared one.
 #
-#   !phrase   literal, checked mechanically
-#   ~regex    regular expression, checked mechanically
-#   -name     switch off a built-in check: emdash, curly, emoji, measurement
+#   !phrase         literal, checked mechanically
+#   ~regex          regular expression, checked mechanically
+#   -name           switch off a built-in check: emdash, curly, emoji, measurement, history, hardwrap
+#   =claude-budget 400        prose words allowed in a nested CLAUDE.md or AGENTS.md
+#   =claude-root-budget 800   the same, for the one at the repository root
 TXT
   wrote+=(".claude/register.local.txt")
 fi
 
-# The hook must not check the files that state the rules it enforces.
 if [ ! -e "$claude/style-exempt.txt" ]; then
   cat > "$claude/style-exempt.txt" <<'TXT'
 # Globs exempt from the style hook, one per line, matched against the absolute path.
-*/CONTRIBUTING.md
+# Prefer an allow line in style-patterns.local.txt to exempting a whole file.
 TXT
   wrote+=(".claude/style-exempt.txt")
 fi

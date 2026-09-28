@@ -1,95 +1,52 @@
 # ai-engineering
 
-Claude Code tooling for one person's repositories. Plan a spec, build it with agents that check each other, review what comes out.
-
-Nothing here knows what a repository is for. Everything project-specific lives in that project's own `.claude/review-profile.md`.
-
-## A full pass
+Claude Code agents, skills and a style hook for planning a spec, building it with agents that check each other, and reviewing the result. Nothing here knows what a repository is for: each project's `.claude/review-profile.md` holds that.
 
 ```
-/plan add passkey login      # interviews the owner, writes _todo/007-passkey-login/
-/plan approve 007            # once its guesses have been answered
-/build 007                   # builds it in parallel lanes, audits the lot, reviews it
-/plan done 007               # cleanup, bundle moves to _done/
+/plan add passkey login      # interviews the owner, drafts a bundle
+/plan approve 007            # once its guesses are answered
+/build 007                   # builds it in parallel lanes, audits it, reviews it
+/plan done 007               # cleanup, docs audit, bundle moves out
 ```
 
-That's the whole thing. `/build` refuses to start on an unapproved spec, and `/plan approve` refuses a spec that isn't buildable yet, so the order holds itself together.
+`/build` refuses an unapproved spec and `/plan approve` refuses one that is not buildable.
 
 ## Commands
 
-| type this | what happens |
+| command | does |
 |---|---|
-| `/plan <brief>` | drafts a spec bundle from a rough idea, marks every guess, then asks about them |
+| `/plan <brief>` | drafts a spec bundle, marks every guess, asks about them |
 | `/plan resume <n>` | picks an open bundle back up |
-| `/plan approve <n>` | checks the bundle is actually buildable, then records the owner's approval |
-| `/plan done <n>` | walks the cleanup and moves the bundle to `_done/` |
-| `/build <n>` | builds an approved bundle, and measures what it cost |
-| `/review [target]` | design pass then comments pass. Defaults to uncommitted work |
-| `/humanize <path>` | rewrites prose that reads like an assistant wrote it |
-| `/review-profile` | fills in this repo's profile by reading the code |
+| `/plan approve <n>` | checks the bundle is buildable, records the approval |
+| `/plan done <n>` | walks the cleanup, audits the docs it touched, closes the bundle |
+| `/build <n>` | builds an approved bundle and records what each dispatch cost |
+| `/review [target]` | design pass then comment pass, on uncommitted work by default |
+| `/review --docs [path]` | audits every `CLAUDE.md`, `README.md`, `CONTRIBUTING.md` and `ARCHITECTURE.md` against the doctrine and the word budget |
+| `/humanize <path>` | rewrites prose that reads as machine-written |
+| `/review-profile` | fills in the profile by reading the code |
 
-## Where the specs live
+Bundles live in three gitignored folders at the repository root: `_todo` for open specs, `_done` for shipped ones, `_tmp` for scratch.
 
-Three gitignored folders. None of them are part of the repo:
+## Agents
 
-| | |
+| agent | job |
 |---|---|
-| `_todo/` | specs in flight. One folder per unit of work, holding `spec.md`, `plan.md`, `tasks.md`, `research.md`, and `build-metrics.md` once it is built |
-| `_done/` | where a bundle goes once it ships |
-| `_tmp/` | scratch. Probes, throwaway scripts, anything needed once |
+| `spec-planner` | researches the tree and interviews the owner into a bundle |
+| `test-writer` | writes each criterion's failing test and proves it bites. Owns the test files |
+| `task-builder` | makes those tests pass inside the file scope, and cannot edit them |
+| `style-reviewer` | design, names, duplication, mutation, documentation |
+| `change-auditor` | the whole change at the end: suite, conformance, seams, defects. Never edits |
+| `comment-reaper` | keeps a comment only if a weak model, given the bare code, cannot recover its fact |
 
-Treat `_todo/` like a board sitting next to the code, not like part of it. Nothing committed references it.
+`/build` coordinates and writes no code. Builders run only their own tests; the full suite runs once, under the auditor. Each build writes `build-metrics.md` into its bundle, a row per dispatch with time and tokens.
 
-## Who does what during a build
+## Rules the agents read
 
-`/build` turns the main agent into a coordinator. It writes no code. It groups the tasks by the files their tests share, runs groups that share nothing in parallel lanes, writes each agent a brief that names the seam it needs, checks what comes back, and bounces anything that fails a check:
-
-| | |
-|---|---|
-| `test-writer` | turns a group's acceptance criteria into failing tests, and proves each one bites by breaking a throwaway implementation. Owns the test files |
-| `task-builder` | makes those tests pass, inside the spec's file scope, and cannot edit them |
-| `style-reviewer` | reviews each group's design as it lands, while the diff is still small |
-| `change-auditor` | the last look at the whole change: suite, lint, conformance, seams, defects. Reports, never edits |
-
-The builder only runs the tests for what it built. The full suite runs once, at the end, under the auditor. That's the only moment the whole change exists.
-
-Then `comment-reaper`, once over the whole change, decides which comments survive. It tests each one against a reader who never saw it, and where the two disagree it has often found a bug.
-
-Every build writes `build-metrics.md` into its bundle, a row per dispatch with its time and tokens, so one bundle can be compared with the last.
-
-Outside a build, `/review` runs the same two reviewers over any target:
-
-| | |
-|---|---|
-| `style-reviewer` | design, naming, duplication, documentation drift |
-| `comment-reaper` | which comments survive |
-
-## The rules they all read
-
-**`doctrine/documentation.md`.** The code and its tests are the primary documentation. Markdown covers what those two can't express, and nothing else. Every agent that writes documentation reads this first, so it's a rule at write time rather than something the reaper discovers later.
-
-**`voice/`.** `register.txt` is the words that read as an assistant, `constructions.md` is the shapes, which is the half no word list catches. `personas/` is for text posting under a person's name. Public docs use the house voice.
-
-**`hooks/check-style.sh`.** Mechanical, runs on every write, decides nothing. It only reports what a grep can be certain about, so a hit is a violation rather than a suggestion. Fires on `Edit`, on `Write`, and on `Bash` commands that wrote a file, which is the case most setups miss.
-
-**`.claude/review-profile.md`.** The per-repo half: boundary rule, excluded paths, which commands to run, what can't be verified on this machine. The agents treat it as fact. Leave placeholders in it and they fall back to generic behaviour and say so in their reports.
+- `doctrine/agents.md`: what every agent does, from the git rule to how it reports.
+- `doctrine/documentation.md`: the code and tests are the documentation; which file each remaining fact goes in.
+- `voice/`: `register.txt` lists words that read as an assistant, `constructions.md` the shapes, `personas/` the voices.
+- `hooks/check-style.sh`: runs after every `Edit`, `Write`, and `Bash` command that wrote a file. It checks register, dashes, recorded measurements, history, hard wrapping and identity detail everywhere; status and roadmap prose in `CLAUDE.md`, `AGENTS.md` and `README.md`; and a word budget on `CLAUDE.md` and `AGENTS.md`.
 
 ## Install
 
-Two modes, in [INSTALL.md](INSTALL.md). Plugin, so one update reaches every repo. Or copy, so a repo is self-contained and travels with a clone.
-
-```
-bin/install.sh <target-repo> --mode copy
-```
-
-Then fill in `.claude/review-profile.md`, or run `/review-profile` and let it read the code instead.
-
-## Why the reaper works the way it does
-
-It doesn't read a comment and judge whether it seems useful, because by then it has already read it. It strips the comments, hands the bare code to a fresh weak model with no repository access, and asks the question the comment claimed to answer.
-
-Recovers the fact from the code? The comment was restating the code. Recovers it from the project's own notes? Second copy. Nothing recovers it? It stays.
-
-The weak model is deliberate. A strong one reconstructs almost anything, which measures the model rather than the code.
-
-Worth reading [COMMENT-REAPER.md](COMMENT-REAPER.md) for why this finds real bugs and not only dead comments.
+See [INSTALL.md](INSTALL.md), then fill in `.claude/review-profile.md` or run `/review-profile`. [COMMENT-REAPER.md](COMMENT-REAPER.md) shows why the reaper finds bugs as well as dead comments.

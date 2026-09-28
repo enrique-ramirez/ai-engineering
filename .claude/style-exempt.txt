@@ -1,11 +1,3 @@
 # Globs exempt from the style hook, one per line, matched against the absolute path.
-# This repository holds the rules, so the files stating them quote what they forbid.
-*/ai-engineering/hooks/*
-*/ai-engineering/voice/*
-*/ai-engineering/agents/*
-*/ai-engineering/skills/*
-*/ai-engineering/profile/*
-*/ai-engineering/README.md
-*/ai-engineering/INSTALL.md
-*/ai-engineering/doctrine/*
-*/ai-engineering/templates/*
+# The constructions file quotes the shapes it describes.
+*/ai-engineering/voice/constructions.md
