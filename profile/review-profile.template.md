@@ -58,14 +58,30 @@ Example: `docs/api.md` for anything the upstream service returns.
 | | command | cost |
 |---|---|---|
 | lint | `pnpm lint` | 1s |
+| format | `pnpm format` | 1s |
 | types | `pnpm typecheck` | 2s |
 | one test file | `pnpm test path/to/file.spec.ts` | 5s |
+| one case | `pnpm test path/to/file.spec.ts -t "the title"` | 5s |
+| build | `pnpm build` | 20s |
+| dev server | `pnpm dev`, port 5173 | stays up |
 
 ## What cannot be verified here
 
-> Code that does not build or run on a normal development machine, so a change to it is reviewed rather than tested. Write "nothing" if that does not apply.
+> Code that does not build or run on a normal development machine, so a change to it is reviewed rather than tested. For a page, what a test in jsdom cannot see. Write "nothing" if that does not apply.
 
 Example: platform-specific sources that only compile on another operating system.
+Example: layout, focus order and rendering, checked by a person in the browser against the dev server.
+
+## User interface
+
+> For a repository with a page or an app: how a component is rendered in a test, where the network is faked, what the look follows, the accessibility bar, the locales and the viewports. Write "none" where there is no user interface.
+
+Example: tests render through `test/render.tsx`, which wraps the query client, the router and the message catalogue; the network is faked at `fetch` with a handler table per test, and hooks are never mocked.
+Example: the look follows the neighbouring screen and `src/shared/styles/tokens.css`; no literal colour outside the tokens file.
+Example: every control has an accessible name and works from the keyboard; a disabled control says why in its label.
+Example: `en` bundled, `es` fetched; every visible string goes through the catalogue, and `test/locales.test.ts` checks the two agree.
+Example: desktop and a narrow phone; a criterion that changes with width says which.
+Example: none.
 
 ## Voice
 
