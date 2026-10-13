@@ -51,6 +51,13 @@ Example: every exported symbol keeps a one-line summary, because the linter fail
 Example: `ARCHITECTURE.md`.
 Example: `docs/api.md` for anything the upstream service returns.
 
+## Where a dependency's source lives
+
+> Where the reaper checks a comment claiming a library, a framework or an internal package cannot do something: the installed packages, a vendored directory, a sibling package, and the lockfile that fixes the version. It has no web access, so name only what is on disk.
+
+Example: `node_modules/<package>` for its types and source, at the version in `pnpm-lock.yaml`.
+Example: `packages/ui/src` for the internal component library.
+
 ## Commands
 
 > Targeted forms only; agents never run a full suite. Give each one's cost, which decides where it runs. Where a narrower form saves nothing because the cost is compiling, say so.

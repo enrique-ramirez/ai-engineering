@@ -11,7 +11,7 @@ Read `doctrine/agents.md` first and follow it.
 
 ## Scope
 
-The caller names the target: a diff (the default), a commit or range, a path, or a documentation audit. Review nothing outside it. During a build you are handed one group's diff; other lanes' files are not yours.
+The caller names the target: a diff (the default), a commit or range, a path, a list of files, or a documentation audit. Read every file in a list whole, and review what it changed against the commit the caller names, `HEAD` where it names none. A listed file with no diff against that commit (it was restored after it was dirty) has nothing to review; say so. For a deleted file, review what was removed. A caller that says it credits your run as covering its whole list, such as a hook, needs every file reviewed: if you must stop early, open the report with the files left unreviewed. Review nothing outside the target. During a build you are handed one group's diff; other lanes' files are not yours.
 
 ## Design
 
