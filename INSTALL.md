@@ -26,7 +26,7 @@ Two modes, one per repository. Neither runs git.
 | `.claude/settings.json` | the `PostToolUse` hook, merged in, with a `.bak` beside it |
 | `.gitignore` | the local and backup files, the manifest, and the three bundle folders |
 
-Copy mode also writes `.claude/hooks/`, `agents/`, `skills/`, `voice/`, `doctrine/` and `templates/`. Existing local files are kept.
+Copy mode also writes `.claude/hooks/`, `agents/`, `skills/`, `voice/`, `doctrine/`, `templates/` and `bin/`, the last holding the build's progress page. Existing local files are kept.
 
 ## Local settings
 

@@ -111,7 +111,8 @@ if [ "$mode" = copy ]; then
   for f in "$kit"/templates/todo/*.md; do place "$f" "$claude/templates/todo/$(basename "$f")"; done
   for f in "$kit"/doctrine/*.md; do place "$f" "$claude/doctrine/$(basename "$f")"; done
   for d in "$kit"/skills/*/; do place "$d/SKILL.md" "$claude/skills/$(basename "$d")/SKILL.md"; done
-  chmod +x "$claude/hooks/check-style.sh"
+  place "$kit/bin/build-dashboard.py" "$claude/bin/build-dashboard.py"
+  chmod +x "$claude/hooks/check-style.sh" "$claude/bin/build-dashboard.py"
   hook_command='$CLAUDE_PROJECT_DIR/.claude/hooks/check-style.sh'
 else
   hook_command='${CLAUDE_PLUGIN_ROOT}/hooks/check-style.sh'

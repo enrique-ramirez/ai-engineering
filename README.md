@@ -19,7 +19,7 @@ Claude Code agents, skills and a style hook for planning a spec, building it wit
 | `/plan resume <n>` | picks an open bundle back up |
 | `/plan approve <n>` | checks the bundle is buildable, records the approval |
 | `/plan done <n>` | walks the cleanup, audits the docs it touched, closes the bundle |
-| `/build <n>` | builds an approved bundle and records what each dispatch cost |
+| `/build <n>` | builds an approved bundle, serves a progress page and records what each dispatch cost |
 | `/review [target]` | design pass then comment pass, on uncommitted work by default |
 | `/review --docs [path]` | audits every `CLAUDE.md`, `README.md`, `CONTRIBUTING.md` and `ARCHITECTURE.md` against the doctrine and the word budget |
 | `/humanize <path>` | rewrites prose that reads as machine-written |
@@ -38,7 +38,7 @@ Bundles live in three gitignored folders at the repository root: `_todo` for ope
 | `change-auditor` | the whole change at the end: suite, conformance, seams, defects. Never edits |
 | `comment-reaper` | keeps a comment only if a weak model, given the bare code, cannot recover its fact |
 
-`/build` coordinates and writes no code. Builders run only their own tests; the full suite runs once, under the auditor. Each build writes `build-metrics.md` into its bundle, a row per dispatch with time and tokens.
+`/build` coordinates and writes no code. Builders run only their own tests; the full suite runs once, under the auditor. Each build writes `build-metrics.md` into its bundle, a row per dispatch with time and tokens, and `bin/build-dashboard.py` turns that file into a page that refreshes while the build runs.
 
 ## Rules the agents read
 
